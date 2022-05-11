@@ -40,19 +40,15 @@ def parse_args(args=None) -> Namespace:
     parser = ArgumentParser(prog='mnotify-git')
 
     parser.add_argument(
-        '-u',
-        '--url',
+        'url',
         help="Mattermost (WEBHOOK) URL",
         type=str,
-        required=True,
     )
 
     parser.add_argument(
-        '-c',
-        '--channel',
+        'channel',
         type=str,
         help="Mattermost Channel",
-        required=True,
     )
 
     parser.add_argument(
@@ -79,6 +75,10 @@ def parse_args(args=None) -> Namespace:
 
     parser.add_argument(
         '-w', '--workflow', type=str, help='hash/ID of the workflow'
+    )
+
+    parser.add_argument(
+        '-n', '--workflow_name', type=str, help='name of the workflow'
     )
 
     parser.add_argument(
