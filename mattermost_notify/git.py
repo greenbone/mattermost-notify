@@ -1,13 +1,18 @@
 # Copyright (C) 2022 Jaspar Stach <jasp.stac@gmx.de>
 
+# pylint: disable=invalid-name
+
 from argparse import ArgumentParser, Namespace
 from enum import Enum
 
+from pontos.terminal import Terminal
+
 import requests
 
+
 class Status(Enum):
-    success = ':white_check_mark: success'
-    failure = ':x: failure'
+    SUCCESS = ':white_check_mark: success'
+    FAILURE = ':x: failure'
 
     def __str__(self):
         return self.name
@@ -21,15 +26,15 @@ LONG_TEMPLATE = (
     '| Branch | {branch} |\n'
 )
 
-SHORT_TEMPLATE = (
-    '{status}: {workflow} in {repository} ({branch})'
-)
+SHORT_TEMPLATE = '{status}: {workflow} in {repository} ({branch})'
 
 DEFAULT_GIT = 'https://github.com'
 
-def _linker(name:str, url:str) -> str:
+
+def _linker(name: str, url: str) -> str:
     # create a markdown link
     return f'[{name}]({url})'
+
 
 def parse_args(args=None) -> Namespace:
     parser = ArgumentParser(prog='mnotify-git')
@@ -62,40 +67,33 @@ def parse_args(args=None) -> Namespace:
         '--status',
         type=str,
         choices=['success', 'failure'],
-        default=Status.success.name,
+        default=Status.SUCCESS.name,
         help="Status of Job",
     )
 
     parser.add_argument(
-        '-r',
-        '--repository',
-        type=str,
-        help='git repository name (orga/repo)'
+        '-r', '--repository', type=str, help='git repository name (orga/repo)'
     )
 
-    parser.add_argument(
-        '-b',
-        '--branch',
-        type=str,
-        help='git branch'
-    )
+    parser.add_argument('-b', '--branch', type=str, help='git branch')
 
     parser.add_argument(
-        '-w',
-        '--workflow',
-        type=str,
-        help='hash/ID of the workflow'
+        '-w', '--workflow', type=str, help='hash/ID of the workflow'
     )
 
     parser.add_argument(
         '--free',
         type=str,
+        help="Print a free-text message to the given channel",
     )
 
     return parser.parse_args(args=args)
 
+
 def main():
     parsed_args: Namespace = parse_args()
+
+    term = Terminal()
 
     if not parsed_args.free:
         template = LONG_TEMPLATE
@@ -106,30 +104,28 @@ def main():
         workflow_url = f'{git_url}/actions/runs/{parsed_args.workflow}'
 
         body = template.format(
-            status = Status[parsed_args.status].value,
-            workflow = _linker(parsed_args.workflow, workflow_url),
-            repository = _linker(parsed_args.repository, git_url),
-            branch = parsed_args.branch,
+            status=Status[parsed_args.status.upper()].value,
+            workflow=_linker(parsed_args.workflow, workflow_url),
+            repository=_linker(parsed_args.repository, git_url),
+            branch=parsed_args.branch,
         )
 
-        
-        data = (
-            f'{{"channel": "{parsed_args.channel}", '
-            f'"text": "{body}"}}'
-        )
+        data = f'{{"channel": "{parsed_args.channel}", ' f'"text": "{body}"}}'
     else:
         data = (
             f'{{"channel": "{parsed_args.channel}", '
             f'"text": "{parsed_args.free}"}}'
         )
-        print(data)
     headers = {}
-    response = requests.post(
-        url=parsed_args.url,
-        headers=headers,
-        data=data
-    )
-    print(response)
+    response = requests.post(url=parsed_args.url, headers=headers, data=data)
+    status = response.status_code
+    if status == 200:
+        term.ok(
+            f"Successfully posted on Mattermost channel {parsed_args.channel}"
+        )
+    else:
+        term.error("Failed to post on Mattermost")
+
 
 if __name__ == '__main__':
     main()
