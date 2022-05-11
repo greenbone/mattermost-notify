@@ -13,7 +13,7 @@ class GitNotifyTestCase(unittest.TestCase):
         self.assertEqual(link, expected)
 
     def test_argument_parsing(self):
-        parsed_args = parse_args(["-u", "www.url.de", "-c", "channel"])
+        parsed_args = parse_args(["www.url.de", "channel"])
 
         self.assertEqual(parsed_args.url, "www.url.de")
         self.assertEqual(parsed_args.channel, "channel")
