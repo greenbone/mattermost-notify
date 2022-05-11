@@ -105,7 +105,7 @@ def main():
 
         body = template.format(
             status=Status[parsed_args.status.upper()].value,
-            workflow=_linker(parsed_args.workflow, workflow_url),
+            workflow=_linker(parsed_args.workflow_name, workflow_url),
             repository=_linker(parsed_args.repository, git_url),
             branch=parsed_args.branch,
         )
