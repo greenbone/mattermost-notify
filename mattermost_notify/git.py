@@ -4,8 +4,12 @@
 
 from argparse import ArgumentParser, Namespace
 from enum import Enum
+import json
+import os
+from pathlib import Path
+from typing import Optional
 
-from pontos.terminal import Terminal
+from pontos.terminal import Terminal, error
 
 import requests
 
@@ -22,11 +26,11 @@ LONG_TEMPLATE = (
     '#### Status: {status}\n\n'
     '| Workflow | {workflow} |\n'
     '| --- | --- |\n'
-    '| Repository | {repository} |\n'
-    '| Branch | {branch} |\n'
+    '| Repository (branch) | {repository} ({branch}) |\n'
+    '| Related commit | {commit} |\n'
 )
 
-SHORT_TEMPLATE = '{status}: {workflow} in {repository} ({branch})'
+SHORT_TEMPLATE = '{status}: {workflow} ({commit})  in {repository} ({branch})'
 
 DEFAULT_GIT = 'https://github.com'
 
@@ -34,6 +38,60 @@ DEFAULT_GIT = 'https://github.com'
 def _linker(name: str, url: str) -> str:
     # create a markdown link
     return f'[{name}]({url})'
+
+
+def get_github_event_json() -> Optional[dict]:
+    json_path = Path(os.environ.get('GITHUB_EVENT_PATH'))
+
+    try:
+        with open(json_path, 'r', encoding="utf-8") as f:
+            event = json.load(f)
+    except FileNotFoundError:
+        error("Could not find GitHub Event JSON file.")
+        event = None
+    except json.JSONDecodeError:
+        error("Could not decode the JSON object.")
+        event = None
+    return event
+
+
+def fill_template(args: Namespace):
+    template = LONG_TEMPLATE
+    if args.short:
+        template = SHORT_TEMPLATE
+
+    event: dict = get_github_event_json()
+    if not event:
+        git_url = f'{DEFAULT_GIT}/{args.repository}'
+        workflow_url = f'{git_url}/actions/runs/{args.workflow}'
+
+        return template.format(
+            status=Status[args.status.upper()].value,
+            workflow=_linker(args.workflow_name, workflow_url),
+            repository=_linker(args.repository, git_url),
+            branch=args.branch,
+        )
+
+    workflow_info = event["workflow_run"]
+    workflow_link = _linker(workflow_info["name"], workflow_info['html_url'])
+    head_commit = workflow_info["head_commit"]
+    head_repo = workflow_info["head_repository"]
+    repo_url = head_repo["html_url"]
+    branch = _linker(
+        workflow_info["head_branch"],
+        f'{repo_url}/tree/{workflow_info["head_branch"]}',
+    )
+    commit_name: str = head_commit["message"].split('\n', 1)[0]
+    commit = _linker(commit_name, f'{repo_url}/{head_commit["id"]}')
+    status = Status[workflow_info['conclusion'].upper()].value
+
+    return template.format(
+        status=status,
+        workflow=workflow_link,
+        repository=_linker(head_repo["full_name"], repo_url),
+        branch=branch,
+        commit=commit,
+    )
 
 
 def parse_args(args=None) -> Namespace:
@@ -96,19 +154,7 @@ def main():
     term = Terminal()
 
     if not parsed_args.free:
-        template = LONG_TEMPLATE
-        if parsed_args.short:
-            template = SHORT_TEMPLATE
-
-        git_url = f'{DEFAULT_GIT}/{parsed_args.repository}'
-        workflow_url = f'{git_url}/actions/runs/{parsed_args.workflow}'
-
-        body = template.format(
-            status=Status[parsed_args.status.upper()].value,
-            workflow=_linker(parsed_args.workflow_name, workflow_url),
-            repository=_linker(parsed_args.repository, git_url),
-            branch=parsed_args.branch,
-        )
+        body = fill_template(args=parsed_args)
 
         data = f'{{"channel": "{parsed_args.channel}", ' f'"text": "{body}"}}'
     else:
