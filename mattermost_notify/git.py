@@ -82,7 +82,7 @@ def fill_template(args: Namespace):
         f'{repo_url}/tree/{workflow_info["head_branch"]}',
     )
     commit_name: str = head_commit["message"].split('\n', 1)[0]
-    commit = _linker(commit_name, f'{repo_url}/{head_commit["id"]}')
+    commit = _linker(commit_name, f'{repo_url}/commit/{head_commit["id"]}')
     status = Status[workflow_info['conclusion'].upper()].value
 
     return template.format(
