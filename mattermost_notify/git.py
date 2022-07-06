@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 from typing import Optional
 
-from pontos.terminal import Terminal, error
+from pontos.terminal.terminal import ConsoleTerminal
 
 import requests
 
@@ -40,27 +40,27 @@ def _linker(name: str, url: str) -> str:
     return f'[{name}]({url})'
 
 
-def get_github_event_json() -> Optional[dict]:
+def get_github_event_json(term: ConsoleTerminal) -> Optional[dict]:
     json_path = Path(os.environ.get('GITHUB_EVENT_PATH'))
 
     try:
         with open(json_path, 'r', encoding="utf-8") as f:
             event = json.load(f)
     except FileNotFoundError:
-        error("Could not find GitHub Event JSON file.")
+        term.error("Could not find GitHub Event JSON file.")
         event = None
     except json.JSONDecodeError:
-        error("Could not decode the JSON object.")
+        term.error("Could not decode the JSON object.")
         event = None
     return event
 
 
-def fill_template(args: Namespace):
+def fill_template(args: Namespace, term: ConsoleTerminal):
     template = LONG_TEMPLATE
     if args.short:
         template = SHORT_TEMPLATE
 
-    event: dict = get_github_event_json()
+    event: dict = get_github_event_json(term)
     if not event:
         git_url = f'{DEFAULT_GIT}/{args.repository}'
         workflow_url = f'{git_url}/actions/runs/{args.workflow}'
@@ -151,10 +151,10 @@ def parse_args(args=None) -> Namespace:
 def main():
     parsed_args: Namespace = parse_args()
 
-    term = Terminal()
+    term = ConsoleTerminal()
 
     if not parsed_args.free:
-        body = fill_template(args=parsed_args)
+        body = fill_template(args=parsed_args, term=term)
 
         data = f'{{"channel": "{parsed_args.channel}", ' f'"text": "{body}"}}'
     else:
