@@ -17,6 +17,7 @@ import requests
 class Status(Enum):
     SUCCESS = ':white_check_mark: success'
     FAILURE = ':x: failure'
+    UNKNOWN = ':grey_question: unknown'
 
     def __str__(self):
         return self.name
@@ -83,7 +84,10 @@ def fill_template(args: Namespace, term: ConsoleTerminal):
     )
     commit_name: str = head_commit["message"].split('\n', 1)[0]
     commit = _linker(commit_name, f'{repo_url}/commit/{head_commit["id"]}')
-    status = Status[workflow_info['conclusion'].upper()].value
+    if workflow_info['conclusion']:
+        status = Status[workflow_info['conclusion'].upper()].value
+    else:
+        status = Status.UNKNOWN.value
 
     return template.format(
         status=status,
