@@ -1,7 +1,22 @@
-# mattermost-notify
+![Greenbone Logo](https://www.greenbone.net/wp-content/uploads/gb_new-logo_horizontal_rgb_small.png)
+
+# mattermost-notify <!-- omit in toc -->
+
+[![GitHub releases](https://img.shields.io/github/release/greenbone/mattermost-notify.svg)](https://github.com/greenbone/mattermost-notify/releases)
+[![PyPI release](https://img.shields.io/pypi/v/mattermost-notify.svg)](https://pypi.org/project/mattermost-notify/)
+[![code test coverage](https://codecov.io/gh/greenbone/mattermost-notify/branch/main/graph/badge.svg)](https://codecov.io/gh/greenbone/mattermost-notify)
+[![Build and test](https://github.com/greenbone/mattermost-notify/actions/workflows/ci-python.yml/badge.svg)](https://github.com/greenbone/mattermost-notify/actions/workflows/ci-python.yml)
 
 This tool is desired to post messages to a mattermost channel.
 You will need a mattermost webhook URL and give a channel name.
+
+## Table of Contents <!-- omit in toc -->
+
+- [Installation](#installation)
+  - [Requirements](#requirements)
+  - [Install using pip](#install-using-pip)
+- [Usage](#usage)
+- [License](#license)
 
 ## Installation
 
