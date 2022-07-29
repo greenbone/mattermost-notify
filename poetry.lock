@@ -27,15 +27,15 @@ tomlkit = ">=0.5.11"
 
 [[package]]
 name = "autohooks-plugin-black"
-version = "21.12.0"
+version = "22.7.0"
 description = "An autohooks plugin for python code formatting via black"
 category = "dev"
 optional = false
-python-versions = ">=3.7.0,<4.0"
+python-versions = ">=3.7,<4.0"
 
 [package.dependencies]
-autohooks = ">=21.6.0,<22.0.0"
-black = ">=20.8,<=23.0.0b0"
+autohooks = ">=21.6.0"
+black = ">=20.8"
 
 [[package]]
 name = "autohooks-plugin-pylint"
@@ -370,7 +370,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "dfafeb3fdb142c61de2a8558354ac8c8edc7c7f0b9c54ee513ed224af03fe4d6"
+content-hash = "1ad7a68def8c6bed5a42b4716f5d2f25d90bbe6df0abd4d02c8f23559bc12ee5"
 
 [metadata.files]
 astroid = [
@@ -382,8 +382,8 @@ autohooks = [
     {file = "autohooks-21.7.0.tar.gz", hash = "sha256:8d09ee52f67cedd5873578a9b4d97b6b80fd9db6dca6d1844621d02a197a12e2"},
 ]
 autohooks-plugin-black = [
-    {file = "autohooks-plugin-black-21.12.0.tar.gz", hash = "sha256:8808fa5d2c7a7b7e66023784d43c210169121998c2f88ac30c71e1b7e5a84a1d"},
-    {file = "autohooks_plugin_black-21.12.0-py3-none-any.whl", hash = "sha256:39f30256243164c88a9082f726c2d27e8b12560ff5529e2ceaa131367b698d7b"},
+    {file = "autohooks-plugin-black-22.7.0.tar.gz", hash = "sha256:39193d8a85df4d0d80b920b1b8b5cf6d257ad502364d0c0bf5c7ff0717b14091"},
+    {file = "autohooks_plugin_black-22.7.0-py3-none-any.whl", hash = "sha256:a420e1e351346e4326aba5d68db2a8c953742ea859e07dd27df6d1957e4a879b"},
 ]
 autohooks-plugin-pylint = [
     {file = "autohooks-plugin-pylint-21.6.0.tar.gz", hash = "sha256:6f1a486f19c8012618fecd9eaa985f5da3ef5c954b32d823323439547b947302"},
