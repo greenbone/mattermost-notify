@@ -29,6 +29,7 @@ LONG_TEMPLATE = (
     '| --- | --- |\n'
     '| Repository (branch) | {repository} ({branch}) |\n'
     '| Related commit | {commit} |\n'
+    '{highlight}'
 )
 
 SHORT_TEMPLATE = '{status}: {workflow} ({commit})  in {repository} ({branch})'
@@ -61,40 +62,46 @@ def fill_template(args: Namespace, term: ConsoleTerminal):
     if args.short:
         template = SHORT_TEMPLATE
 
+    # try to get information from the GiTHUB_EVENT json
     event: dict = get_github_event_json(term)
     if not event:
         git_url = f'{DEFAULT_GIT}/{args.repository}'
-        workflow_url = f'{git_url}/actions/runs/{args.workflow}'
-
-        return template.format(
-            status=Status[args.status.upper()].value,
-            workflow=_linker(args.workflow_name, workflow_url),
-            repository=_linker(args.repository, git_url),
-            branch=args.branch,
+        status = Status[args.status.upper()].value
+        workflow = _linker(
+            args.workflow_name, f'{git_url}/actions/runs/{args.workflow}'
         )
-
-    workflow_info = event["workflow_run"]
-    workflow_link = _linker(workflow_info["name"], workflow_info['html_url'])
-    head_commit = workflow_info["head_commit"]
-    head_repo = workflow_info["head_repository"]
-    repo_url = head_repo["html_url"]
-    branch = _linker(
-        workflow_info["head_branch"],
-        f'{repo_url}/tree/{workflow_info["head_branch"]}',
-    )
-    commit_name: str = head_commit["message"].split('\n', 1)[0]
-    commit = _linker(commit_name, f'{repo_url}/commit/{head_commit["id"]}')
-    if workflow_info['conclusion']:
-        status = Status[workflow_info['conclusion'].upper()].value
+        repository = _linker(args.repository, git_url)
+        branch = args.branch
+        commit = "not available"
     else:
-        status = Status.UNKNOWN.value
+        workflow_info = event["workflow_run"]
+        workflow = _linker(workflow_info["name"], workflow_info['html_url'])
+        head_commit = workflow_info["head_commit"]
+        head_repo = workflow_info["head_repository"]
+        repo_url = head_repo["html_url"]
+        repository = _linker(head_repo["full_name"], repo_url)
+        branch = _linker(
+            workflow_info["head_branch"],
+            f'{repo_url}/tree/{workflow_info["head_branch"]}',
+        )
+        commit_name: str = head_commit["message"].split('\n', 1)[0]
+        commit = _linker(commit_name, f'{repo_url}/commit/{head_commit["id"]}')
+        if workflow_info['conclusion']:
+            status = Status[workflow_info['conclusion'].upper()].value
+        else:
+            status = Status.UNKNOWN.value
+
+    highlight = ""
+    if args.highlight and status is not Status.SUCCESS.value:
+        highlight = ''.join([f'@{h}\n' for h in args.highlight])
 
     return template.format(
         status=status,
-        workflow=workflow_link,
-        repository=_linker(head_repo["full_name"], repo_url),
+        workflow=workflow,
+        repository=repository,
         branch=branch,
         commit=commit,
+        highlight=highlight,
     )
 
 
@@ -147,6 +154,12 @@ def parse_args(args=None) -> Namespace:
         '--free',
         type=str,
         help="Print a free-text message to the given channel",
+    )
+
+    parser.add_argument(
+        '--highlight',
+        nargs='+',
+        help="List of persons to highlight in the channel",
     )
 
     return parser.parse_args(args=args)
