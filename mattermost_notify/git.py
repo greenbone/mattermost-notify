@@ -61,16 +61,21 @@ def fill_template(args: Namespace, term: ConsoleTerminal):
     if args.short:
         template = SHORT_TEMPLATE
 
+    highlight = str()
+    if args.highlight:
+        highlight = ''.join([f'@{h}\n' for h in args.highlight])
+
     event: dict = get_github_event_json(term)
     if not event:
         git_url = f'{DEFAULT_GIT}/{args.repository}'
         workflow_url = f'{git_url}/actions/runs/{args.workflow}'
 
-        return template.format(
+        return highlight + template.format(
             status=Status[args.status.upper()].value,
             workflow=_linker(args.workflow_name, workflow_url),
             repository=_linker(args.repository, git_url),
             branch=args.branch,
+            commit="not available",
         )
 
     workflow_info = event["workflow_run"]
@@ -89,7 +94,7 @@ def fill_template(args: Namespace, term: ConsoleTerminal):
     else:
         status = Status.UNKNOWN.value
 
-    return template.format(
+    return highlight + template.format(
         status=status,
         workflow=workflow_link,
         repository=_linker(head_repo["full_name"], repo_url),
@@ -147,6 +152,12 @@ def parse_args(args=None) -> Namespace:
         '--free',
         type=str,
         help="Print a free-text message to the given channel",
+    )
+
+    parser.add_argument(
+        '--highlight',
+        nargs='+',
+        help="List of persons to highlight in the channel",
     )
 
     return parser.parse_args(args=args)

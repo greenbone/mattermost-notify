@@ -1,8 +1,13 @@
 # Copyright (C) 2022 Jaspar Stach <jasp.stac@gmx.de>
 
 import unittest
+from unittest.mock import patch
 
-from mattermost_notify.git import _linker as linker, parse_args
+from mattermost_notify.git import (
+    _linker as linker,
+    parse_args,
+    fill_template,
+)
 
 
 class GitNotifyTestCase(unittest.TestCase):
@@ -21,3 +26,20 @@ class GitNotifyTestCase(unittest.TestCase):
     def test_fail_argument_parsing(self):
         with self.assertRaises(SystemExit):
             parse_args(["-s"])
+
+    @patch("mattermost_notify.git.get_github_event_json")
+    def test_highlight(self, event_mock: None):
+        event_mock.return_value = None
+        parsed_args = parse_args(
+            ["www.url.de", "channel", "--highlight", "user1", "user2"]
+        )
+        rf = fill_template(parsed_args, None)
+        rt = (
+            "@user1\n@user2\n#### Status: :white_check_mark"
+            ": success\n\n| Workflow | [None](https://githu"
+            "b.com/None/actions/runs/None) |\n| --- | --- |"
+            "\n| Repository (branch) | [None](https://githu"
+            "b.com/None) (None) |\n| Related commit | not a"
+            "vailable |\n"
+        )
+        self.assertEqual(rf, rt)
