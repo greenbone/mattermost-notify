@@ -28,18 +28,45 @@ class GitNotifyTestCase(unittest.TestCase):
             parse_args(["-s"])
 
     @patch("mattermost_notify.git.get_github_event_json")
-    def test_highlight(self, event_mock: None):
+    def test_no_highlight(self, event_mock: None):
         event_mock.return_value = None
         parsed_args = parse_args(
             ["www.url.de", "channel", "--highlight", "user1", "user2"]
         )
         rf = fill_template(parsed_args, None)
         rt = (
-            "@user1\n@user2\n#### Status: :white_check_mark"
-            ": success\n\n| Workflow | [None](https://githu"
+            "#### Status: :white_check_mark: success\n\n"
+            "| Workflow | [None](https://githu"
             "b.com/None/actions/runs/None) |\n| --- | --- |"
             "\n| Repository (branch) | [None](https://githu"
             "b.com/None) (None) |\n| Related commit | not a"
             "vailable |\n"
         )
+        print(rf)
+        self.assertEqual(rf, rt)
+
+    @patch("mattermost_notify.git.get_github_event_json")
+    def test_highlight(self, event_mock: None):
+        event_mock.return_value = None
+        parsed_args = parse_args(
+            [
+                "www.url.de",
+                "channel",
+                "--highlight",
+                "user1",
+                "user2",
+                "-S",
+                "failure",
+            ]
+        )
+        rf = fill_template(parsed_args, None)
+        rt = (
+            "#### Status: :x: failure\n\n"
+            "| Workflow | [None](https://githu"
+            "b.com/None/actions/runs/None) |\n| --- | --- |"
+            "\n| Repository (branch) | [None](https://githu"
+            "b.com/None) (None) |\n| Related commit | not a"
+            "vailable |\n@user1\n@user2\n"
+        )
+        print(rf)
         self.assertEqual(rf, rt)
