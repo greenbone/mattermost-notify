@@ -28,7 +28,7 @@ LONG_TEMPLATE = (
     '| Workflow | {workflow} |\n'
     '| --- | --- |\n'
     '| Repository (branch) | {repository} ({branch}) |\n'
-    '| Related commit | {commit} |\n'
+    '| Related commit | {commit} |\n\n'
     '{highlight}'
 )
 

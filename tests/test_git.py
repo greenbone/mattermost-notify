@@ -40,7 +40,7 @@ class GitNotifyTestCase(unittest.TestCase):
             "b.com/None/actions/runs/None) |\n| --- | --- |"
             "\n| Repository (branch) | [None](https://githu"
             "b.com/None) (None) |\n| Related commit | not a"
-            "vailable |\n"
+            "vailable |\n\n"
         )
         print(rf)
         self.assertEqual(rf, rt)
@@ -66,7 +66,7 @@ class GitNotifyTestCase(unittest.TestCase):
             "b.com/None/actions/runs/None) |\n| --- | --- |"
             "\n| Repository (branch) | [None](https://githu"
             "b.com/None) (None) |\n| Related commit | not a"
-            "vailable |\n@user1\n@user2\n"
+            "vailable |\n\n@user1\n@user2\n"
         )
         print(rf)
         self.assertEqual(rf, rt)
