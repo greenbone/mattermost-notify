@@ -1,13 +1,10 @@
 # Copyright (C) 2022 Jaspar Stach <jasp.stac@gmx.de>
 
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
-from mattermost_notify.git import (
-    _linker as linker,
-    parse_args,
-    fill_template,
-)
+from mattermost_notify.git import _linker as linker
+from mattermost_notify.git import fill_template, parse_args
 
 
 class GitNotifyTestCase(unittest.TestCase):
@@ -33,7 +30,7 @@ class GitNotifyTestCase(unittest.TestCase):
         parsed_args = parse_args(
             ["www.url.de", "channel", "--highlight", "user1", "user2"]
         )
-        rf = fill_template(parsed_args, None)
+        rf = fill_template(parsed_args, MagicMock())
         rt = (
             "#### Status: :white_check_mark: success\n\n"
             "| Workflow | [None](https://githu"
@@ -59,7 +56,7 @@ class GitNotifyTestCase(unittest.TestCase):
                 "failure",
             ]
         )
-        rf = fill_template(parsed_args, None)
+        rf = fill_template(parsed_args, MagicMock())
         rt = (
             "#### Status: :x: failure\n\n"
             "| Workflow | [None](https://githu"
@@ -68,5 +65,4 @@ class GitNotifyTestCase(unittest.TestCase):
             "b.com/None) (None) |\n| Related commit | not a"
             "vailable |\n\n@user1\n@user2\n"
         )
-        print(rf)
         self.assertEqual(rf, rt)
