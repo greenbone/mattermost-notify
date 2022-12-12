@@ -45,7 +45,7 @@ def get_github_event_json(term: ConsoleTerminal) -> Optional[dict]:
     json_path = Path(os.environ.get('GITHUB_EVENT_PATH'))
 
     try:
-        with open(json_path, 'r', encoding="utf-8") as f:
+        with json_path.open('r', encoding="utf-8") as f:
             event = json.load(f)
     except FileNotFoundError:
         term.error("Could not find GitHub Event JSON file.")
