@@ -56,7 +56,7 @@ def get_github_event_json(term: ConsoleTerminal) -> Optional[dict]:
     return event
 
 
-def fill_template(args: Namespace, term: ConsoleTerminal):
+def fill_template(args: Namespace, term: ConsoleTerminal) -> str:
     template = LONG_TEMPLATE
     if args.short:
         template = SHORT_TEMPLATE
@@ -164,7 +164,7 @@ def parse_args(args=None) -> Namespace:
     return parser.parse_args(args=args)
 
 
-def main():
+def main() -> None:
     parsed_args: Namespace = parse_args()
 
     term = ConsoleTerminal()
