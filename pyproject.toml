@@ -32,14 +32,12 @@ include = [
 [tool.poetry.dependencies]
 python = "^3.7"
 requests = "^2.24.0"
-pontos = "^22.7.0"
+pontos = ">=22.7.0"
 
 [tool.poetry.dev-dependencies]
-pylint = "^2.13.8"
-autohooks = "^22.11.2"
-autohooks-plugin-pylint = "^22.8.1"
-autohooks-plugin-black = "^22.11.0"
-black = "22.12.0"
+autohooks = ">=22.11.2"
+autohooks-plugin-pylint = ">=22.8.1"
+autohooks-plugin-black = ">=22.11.0"
 coverage = "^6.5"
 
 [tool.black]
