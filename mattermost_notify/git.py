@@ -2,16 +2,15 @@
 
 # pylint: disable=invalid-name
 
-from argparse import ArgumentParser, Namespace
-from enum import Enum
 import json
 import os
+from argparse import ArgumentParser, Namespace
+from enum import Enum
 from pathlib import Path
 from typing import Optional
 
-from pontos.terminal.terminal import ConsoleTerminal
-
 import requests
+from pontos.terminal.terminal import ConsoleTerminal
 
 
 class Status(Enum):
