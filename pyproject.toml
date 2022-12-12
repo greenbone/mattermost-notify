@@ -38,6 +38,7 @@ pontos = ">=22.7.0"
 autohooks = ">=22.11.2"
 autohooks-plugin-pylint = ">=22.8.1"
 autohooks-plugin-black = ">=22.11.0"
+autohooks-plugin-isort = ">=22.8.0"
 coverage = "^6.5"
 
 [tool.black]
@@ -57,8 +58,12 @@ exclude = '''
 )/
 '''
 
+[tool.isort]
+profile = "black"
+line_length = 80
+
 [tool.autohooks]
-pre-commit = ['autohooks.plugins.black', 'autohooks.plugins.pylint']
+pre-commit = ['autohooks.plugins.black', 'autohooks.plugin.isort', 'autohooks.plugins.pylint']
 mode = "poetry"
 
 [tool.pontos.version]
