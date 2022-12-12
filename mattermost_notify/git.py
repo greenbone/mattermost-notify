@@ -9,7 +9,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional
 
-import requests
+import httpx
 from pontos.terminal.terminal import ConsoleTerminal
 
 
@@ -62,7 +62,7 @@ def fill_template(args: Namespace, term: ConsoleTerminal) -> str:
         template = SHORT_TEMPLATE
 
     # try to get information from the GiTHUB_EVENT json
-    event: dict = get_github_event_json(term)
+    event = get_github_event_json(term)
     if not event:
         git_url = f"{DEFAULT_GIT}/{args.repository}"
         status = Status[args.status.upper()].value
@@ -172,16 +172,12 @@ def main() -> None:
     if not parsed_args.free:
         body = fill_template(args=parsed_args, term=term)
 
-        data = f'{{"channel": "{parsed_args.channel}", ' f'"text": "{body}"}}'
+        data = {"channel": parsed_args.channel, "text": body}
     else:
-        data = (
-            f'{{"channel": "{parsed_args.channel}", '
-            f'"text": "{parsed_args.free}"}}'
-        )
-    headers = {}
-    response = requests.post(url=parsed_args.url, headers=headers, data=data)
-    status = response.status_code
-    if status == 200:
+        data = {"channel": parsed_args.channel, "text": parsed_args.free}
+
+    response = httpx.post(url=parsed_args.url, json=data)
+    if response.is_success:
         term.ok(
             f"Successfully posted on Mattermost channel {parsed_args.channel}"
         )
