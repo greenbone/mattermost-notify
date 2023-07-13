@@ -37,9 +37,9 @@ SHORT_TEMPLATE = "{status}: {workflow} ({commit})  in {repository} ({branch})"
 DEFAULT_GIT = "https://github.com"
 
 
-def _linker(name: str, url: str) -> str:
+def _linker(name: str, url: Optional[str] = None) -> str:
     # create a markdown link
-    return f"[{name}]({url})"
+    return f"[{name}]({url})" if url else name
 
 
 def get_github_event_json(term: ConsoleTerminal) -> dict[str, Any]:
