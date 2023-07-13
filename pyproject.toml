@@ -23,7 +23,6 @@ packages = [
   { include = "mattermost_notify"},
   { include = "tests", format = "sdist" },
   { include = "poetry.lock", format = "sdist" },
-  { include = "poetry.toml", format = "sdist" },
 ]
 include = [
 ]
