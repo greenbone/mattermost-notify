@@ -7,7 +7,7 @@ import os
 from argparse import ArgumentParser, Namespace
 from enum import Enum
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 import httpx
 from pontos.terminal.terminal import ConsoleTerminal
@@ -42,19 +42,22 @@ def _linker(name: str, url: str) -> str:
     return f"[{name}]({url})"
 
 
-def get_github_event_json(term: ConsoleTerminal) -> Optional[dict]:
-    json_path = Path(os.environ.get("GITHUB_EVENT_PATH"))
+def get_github_event_json(term: ConsoleTerminal) -> dict[str, Any]:
+    github_event_path = os.environ.get("GITHUB_EVENT_PATH")
+
+    if not github_event_path:
+        return {}
+
+    json_path = Path(github_event_path)
 
     try:
         with json_path.open("r", encoding="utf-8") as f:
-            event = json.load(f)
+            return json.load(f)
     except FileNotFoundError:
         term.error("Could not find GitHub Event JSON file.")
-        event = None
     except json.JSONDecodeError:
         term.error("Could not decode the JSON object.")
-        event = None
-    return event
+    return {}
 
 
 def fill_template(args: Namespace, term: ConsoleTerminal) -> str:
