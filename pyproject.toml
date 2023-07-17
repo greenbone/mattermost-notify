@@ -70,6 +70,11 @@ mode = "poetry"
 [tool.pontos.version]
 version-module-file = "mattermost_notify/__version__.py"
 
+[tool.mypy]
+files = "mattermost_notify"
+ignore_missing_imports = true
+explicit_package_bases = true
+
 [tool.poetry.scripts]
 mnotify-git = 'mattermost_notify.git:main'
 
