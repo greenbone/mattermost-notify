@@ -94,6 +94,12 @@ class ParseArgsTestCase(unittest.TestCase):
         parsed_args = parse_args(["www.url.de", "channel", "--commit", "1234"])
         self.assertEqual(parsed_args.commit, "1234")
 
+    def test_parse_commit_message(self):
+        parsed_args = parse_args(
+            ["www.url.de", "channel", "--commit-message", "foo bar"]
+        )
+        self.assertEqual(parsed_args.commit_message, "foo bar")
+
     def test_parse_free(self):
         parsed_args = parse_args(
             ["www.url.de", "channel", "--free", "lorem ipsum"]

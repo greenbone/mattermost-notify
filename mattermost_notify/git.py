@@ -58,6 +58,7 @@ def fill_template(
     short: bool = False,
     highlight: Optional[list[str]] = None,
     commit: Optional[str] = None,
+    commit_message: Optional[str] = None,
     branch: Optional[str] = None,
     repository: Optional[str] = None,
     status: Optional[str] = None,
@@ -92,7 +93,7 @@ def fill_template(
     used_branch: str = (
         branch if branch else workflow_info.get("head_branch", "")
     )
-    branch_url = f"{repository_url}/tree/{branch}"
+    branch_url = f"{repository_url}/tree/{used_branch}"
 
     workflow_url = (
         f"{repository_url}/actions/runs/{used_workflow_id}"
@@ -100,13 +101,15 @@ def fill_template(
         else workflow_info.get("html_url", "")
     )
 
+    head_commit = workflow_info.get("head_commit", {})
+
     if commit:
         commit_url = f"{repository_url}/commit/{commit}"
-        commit_message = commit
     else:
-        head_commit = workflow_info.get("head_commit", {})
         commit_url = f'{repository_url}/commit/{head_commit.get("id", "")}'
-        commit_message: str = head_commit.get("message", "").split("\n", 1)[0]  # type: ignore[no-redef] # noqa: E501
+
+    if not commit_message:
+        commit_message = head_commit.get("message", "").split("\n", 1)[0]
 
     highlight_str = ""
     if highlight and workflow_status is not Status.SUCCESS:
@@ -117,7 +120,7 @@ def fill_template(
         workflow=linker(used_workflow_name, workflow_url),
         repository=linker(repository, repository_url),
         branch=linker(used_branch, branch_url),
-        commit=linker(commit_message, commit_url),
+        commit=linker(commit_message, commit_url),  # type: ignore[arg-type]
         highlight=highlight_str,
     )
 

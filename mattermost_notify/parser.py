@@ -52,7 +52,8 @@ def parse_args(args=None) -> Namespace:
         "-n", "--workflow_name", type=str, help="name of the workflow"
     )
 
-    parser.add_argument("--commit", help="Commit to use")
+    parser.add_argument("--commit", help="Commit ID to use")
+    parser.add_argument("--commit-message", help="Commit Message to use")
 
     parser.add_argument(
         "--free",
