@@ -106,7 +106,7 @@ class FillTemplateTestCase(unittest.TestCase):
                     "html_url": "https://github.com/foo/bar",
                 },
                 "head_branch": "main",
-                "head_commit": "12345",
+                "head_commit": {"id": "12345"},
                 "workflow_id": "w1",
             }
         }

@@ -106,7 +106,7 @@ def fill_template(
     else:
         head_commit = workflow_info.get("head_commit", {})
         commit_url = f'{repository_url}/commit/{head_commit.get("id", "")}'
-        commit_message: str = head_commit.get("message", "").split("\n", 1)[0]
+        commit_message: str = head_commit.get("message", "").split("\n", 1)[0]  # type: ignore[no-redef] # noqa: E501
 
     highlight_str = ""
     if highlight and workflow_status is not Status.SUCCESS:
