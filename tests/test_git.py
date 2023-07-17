@@ -32,7 +32,7 @@ class FillTemplateTestCase(unittest.TestCase):
 
 | Workflow |  |
 | --- | --- |
-| Repository (branch) |  ([](/tree/None)) |
+| Repository (branch) |  ([](/tree/)) |
 | Related commit | [](/commit/) |
 
 """
@@ -48,7 +48,7 @@ class FillTemplateTestCase(unittest.TestCase):
 
 | Workflow |  |
 | --- | --- |
-| Repository (branch) |  ([](/tree/None)) |
+| Repository (branch) |  ([](/tree/)) |
 | Related commit | [](/commit/) |
 
 @user1
@@ -63,13 +63,14 @@ class FillTemplateTestCase(unittest.TestCase):
             workflow_name="SomeWorkflow",
             workflow_id="w1",
             commit="12345",
+            commit_message="Add foo",
             repository="foo/bar",
             branch="main",
             terminal=MagicMock(),
         )
         expected = (
             ":white_check_mark: success: [SomeWorkflow](https://github.com/foo/bar/actions/runs/w1) "
-            "([12345](https://github.com/foo/bar/commit/12345)) in "
+            "([Add foo](https://github.com/foo/bar/commit/12345)) in "
             "[foo/bar](https://github.com/foo/bar) ([main](https://github.com/foo/bar/tree/main))"
         )
         self.assertEqual(expected, actual)
@@ -81,6 +82,7 @@ class FillTemplateTestCase(unittest.TestCase):
             workflow_name="SomeWorkflow",
             workflow_id="w1",
             commit="12345",
+            commit_message="Add foo",
             repository="foo/bar",
             branch="main",
             terminal=MagicMock(),
@@ -90,7 +92,7 @@ class FillTemplateTestCase(unittest.TestCase):
 | Workflow | [SomeWorkflow](https://github.com/foo/bar/actions/runs/w1) |
 | --- | --- |
 | Repository (branch) | [foo/bar](https://github.com/foo/bar) ([main](https://github.com/foo/bar/tree/main)) |
-| Related commit | [12345](https://github.com/foo/bar/commit/12345) |
+| Related commit | [Add foo](https://github.com/foo/bar/commit/12345) |
 
 """
         self.assertEqual(expected, actual)
@@ -106,14 +108,13 @@ class FillTemplateTestCase(unittest.TestCase):
                     "html_url": "https://github.com/foo/bar",
                 },
                 "head_branch": "main",
-                "head_commit": {"id": "12345"},
+                "head_commit": {"id": "12345", "message": "Add foo"},
                 "workflow_id": "w1",
             }
         }
         mock.return_value = event
 
         actual = fill_template(
-            short=False,
             terminal=MagicMock(),
         )
         expected = """#### Status: :white_check_mark: success
@@ -121,7 +122,7 @@ class FillTemplateTestCase(unittest.TestCase):
 | Workflow | [SomeWorkflow](https://github.com/foo/bar/actions/runs/w1) |
 | --- | --- |
 | Repository (branch) | [foo/bar](https://github.com/foo/bar) ([main](https://github.com/foo/bar/tree/main)) |
-| Related commit | [12345](https://github.com/foo/bar/commit/12345) |
+| Related commit | [Add foo](https://github.com/foo/bar/commit/12345) |
 
 """
         self.assertEqual(expected, actual)
