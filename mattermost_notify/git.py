@@ -9,11 +9,11 @@ import os
 from pathlib import Path
 from typing import Any, Optional
 
-import httpx
 from pontos.terminal.terminal import ConsoleTerminal
 
 from mattermost_notify.errors import MattermostNotifyError
 from mattermost_notify.parser import parse_args
+from mattermost_notify.post import post
 from mattermost_notify.status import Status
 
 LONG_TEMPLATE = (
@@ -140,19 +140,14 @@ def main() -> None:
                 workflow_id=parsed_args.workflow,
                 workflow_name=parsed_args.workflow_name,
             )
-
-            data = {"channel": parsed_args.channel, "text": body}
+            post(parsed_args.url, parsed_args.channel, body)
         else:
-            data = {"channel": parsed_args.channel, "text": parsed_args.free}
+            post(parsed_args.url, parsed_args.channel, parsed_args.free)
 
-        response = httpx.post(url=parsed_args.url, json=data)
-        if response.is_success:
-            term.ok(
-                "Successfully posted on Mattermost channel "
-                f"{parsed_args.channel}"
-            )
-        else:
-            term.error("Failed to post on Mattermost")
+        term.ok(
+            "Successfully posted on Mattermost channel "
+            f"{parsed_args.channel}"
+        )
     except MattermostNotifyError as e:
         term.error(f"❌ Error: {e}")
 
