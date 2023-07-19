@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 from typing import Any, Optional
 
-from pontos.terminal.terminal import ConsoleTerminal
+from pontos.terminal import RichTerminal
 
 from mattermost_notify.errors import MattermostNotifyError
 from mattermost_notify.parser import parse_args
@@ -126,7 +126,7 @@ def fill_template(
 def main() -> None:
     parsed_args = parse_args()
 
-    term = ConsoleTerminal()
+    term = RichTerminal()
 
     try:
         if not parsed_args.free:
