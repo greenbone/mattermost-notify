@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 from typing import Any, Optional
 
+from pontos.git import Git
 from pontos.terminal import RichTerminal
 
 from mattermost_notify.errors import MattermostNotifyError
@@ -103,11 +104,16 @@ def fill_template(
 
     if commit:
         commit_url = f"{repository_url}/commit/{commit}"
+
+        if not commit_message:
+            commit_message = Git().show(
+                format="format:%s", patch=False, objects=commit  # type: ignore[assignment] # noqa: E501
+            )
     else:
         commit_url = f'{repository_url}/commit/{head_commit.get("id", "")}'
 
-    if not commit_message:
-        commit_message = head_commit.get("message", "").split("\n", 1)[0]
+        if not commit_message:
+            commit_message = head_commit.get("message", "").split("\n", 1)[0]
 
     highlight_str = ""
     if highlight and workflow_status is not Status.SUCCESS:
