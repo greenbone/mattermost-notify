@@ -26,7 +26,6 @@ class FillTemplateTestCase(unittest.TestCase):
         actual = fill_template(
             highlight=["user1", "user2"],
             status=Status.SUCCESS.name,
-            terminal=MagicMock(),
         )
         expected = """#### Status: :white_check_mark: success
 
@@ -42,7 +41,6 @@ class FillTemplateTestCase(unittest.TestCase):
         actual = fill_template(
             highlight=["user1", "user2"],
             status=Status.FAILURE.name,
-            terminal=MagicMock(),
         )
         expected = """#### Status: :x: failure
 
@@ -66,7 +64,6 @@ class FillTemplateTestCase(unittest.TestCase):
             commit_message="Add foo",
             repository="foo/bar",
             branch="main",
-            terminal=MagicMock(),
         )
         expected = (
             ":white_check_mark: success: [SomeWorkflow](https://github.com/foo/bar/actions/runs/w1) "
@@ -85,7 +82,6 @@ class FillTemplateTestCase(unittest.TestCase):
             commit_message="Add foo",
             repository="foo/bar",
             branch="main",
-            terminal=MagicMock(),
         )
         expected = """#### Status: :white_check_mark: success
 
@@ -114,9 +110,7 @@ class FillTemplateTestCase(unittest.TestCase):
         }
         mock.return_value = event
 
-        actual = fill_template(
-            terminal=MagicMock(),
-        )
+        actual = fill_template()
         expected = """#### Status: :white_check_mark: success
 
 | Workflow | [SomeWorkflow](https://github.com/foo/bar/actions/runs/w1) |
