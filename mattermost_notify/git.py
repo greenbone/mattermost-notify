@@ -12,6 +12,7 @@ from typing import Any, Optional
 import httpx
 from pontos.terminal.terminal import ConsoleTerminal
 
+from mattermost_notify.errors import MattermostNotifyError
 from mattermost_notify.parser import parse_args
 from mattermost_notify.status import Status
 
@@ -34,7 +35,7 @@ def linker(name: str, url: Optional[str] = None) -> str:
     return f"[{name}]({url})" if url else name
 
 
-def get_github_event_json(term: ConsoleTerminal) -> dict[str, Any]:
+def get_github_event_json() -> dict[str, Any]:
     github_event_path = os.environ.get("GITHUB_EVENT_PATH")
 
     if not github_event_path:
@@ -46,11 +47,9 @@ def get_github_event_json(term: ConsoleTerminal) -> dict[str, Any]:
         with json_path.open("r", encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
-        term.error("Could not find GitHub Event JSON file.")
+        raise MattermostNotifyError("Could not find GitHub Event JSON file.")
     except json.JSONDecodeError:
-        term.error("Could not decode the JSON object.")
-
-    return {}
+        raise MattermostNotifyError("Could not decode the JSON object.")
 
 
 def fill_template(
@@ -64,12 +63,11 @@ def fill_template(
     status: Optional[str] = None,
     workflow_id: Optional[str] = None,
     workflow_name: Optional[str] = None,
-    terminal: ConsoleTerminal,
 ) -> str:
     template = SHORT_TEMPLATE if short else LONG_TEMPLATE
 
     # try to get information from the GiTHUB_EVENT json
-    event = get_github_event_json(terminal)
+    event = get_github_event_json()
     workflow_info: dict[str, Any] = event.get("workflow_run", {})
 
     status = status if status else workflow_info.get("conclusion")
@@ -130,30 +128,33 @@ def main() -> None:
 
     term = ConsoleTerminal()
 
-    if not parsed_args.free:
-        body = fill_template(
-            highlight=parsed_args.highlight,
-            short=parsed_args.short,
-            branch=parsed_args.branch,
-            commit=parsed_args.commit,
-            repository=parsed_args.repository,
-            status=parsed_args.status,
-            workflow_id=parsed_args.workflow,
-            workflow_name=parsed_args.workflow_name,
-            terminal=term,
-        )
+    try:
+        if not parsed_args.free:
+            body = fill_template(
+                highlight=parsed_args.highlight,
+                short=parsed_args.short,
+                branch=parsed_args.branch,
+                commit=parsed_args.commit,
+                repository=parsed_args.repository,
+                status=parsed_args.status,
+                workflow_id=parsed_args.workflow,
+                workflow_name=parsed_args.workflow_name,
+            )
 
-        data = {"channel": parsed_args.channel, "text": body}
-    else:
-        data = {"channel": parsed_args.channel, "text": parsed_args.free}
+            data = {"channel": parsed_args.channel, "text": body}
+        else:
+            data = {"channel": parsed_args.channel, "text": parsed_args.free}
 
-    response = httpx.post(url=parsed_args.url, json=data)
-    if response.is_success:
-        term.ok(
-            f"Successfully posted on Mattermost channel {parsed_args.channel}"
-        )
-    else:
-        term.error("Failed to post on Mattermost")
+        response = httpx.post(url=parsed_args.url, json=data)
+        if response.is_success:
+            term.ok(
+                "Successfully posted on Mattermost channel "
+                f"{parsed_args.channel}"
+            )
+        else:
+            term.error("Failed to post on Mattermost")
+    except MattermostNotifyError as e:
+        term.error(f"❌ Error: {e}")
 
 
 if __name__ == "__main__":
