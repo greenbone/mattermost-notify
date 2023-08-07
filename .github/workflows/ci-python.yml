@@ -33,6 +33,18 @@ jobs:
     with:
       python-version: ${{ matrix.python-version }}
 
+  mypy:
+    name: Check types
+    strategy:
+      matrix:
+        python-version:
+          - "3.9"
+          - "3.10"
+          - "3.11"
+    uses: greenbone/workflows/.github/workflows/typing-python.yml@main
+    with:
+      python-version: ${{ matrix.python-version }}
+
   codecov:
     name: Upload coverage to codecov.io
     runs-on: "ubuntu-latest"
