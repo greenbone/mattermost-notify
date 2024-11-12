@@ -37,6 +37,21 @@ class FillTemplateTestCase(unittest.TestCase):
 """
         self.assertEqual(expected, actual)
 
+    def test_warning_no_highlight(self):
+        actual = fill_template(
+            highlight=["user1", "user2"],
+            status=Status.WARNING.name,
+        )
+        expected = """#### Status: :warning: warning
+
+| Workflow |  |
+| --- | --- |
+| Repository (branch) |  ([](/tree/)) |
+| Related commit | [](/commit/) |
+
+"""
+        self.assertEqual(expected, actual)
+
     def test_failure_highlight(self):
         actual = fill_template(
             highlight=["user1", "user2"],

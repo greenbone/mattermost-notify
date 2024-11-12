@@ -116,7 +116,7 @@ def fill_template(
             commit_message = head_commit.get("message", "").split("\n", 1)[0]
 
     highlight_str = ""
-    if highlight and workflow_status is not Status.SUCCESS:
+    if highlight and workflow_status not in (Status.SUCCESS, Status.WARNING):
         highlight_str = "".join([f"@{h}\n" for h in highlight])
 
     return template.format(

@@ -39,6 +39,17 @@ class ParseArgsTestCase(unittest.TestCase):
         )
         self.assertEqual(parsed_args.status, "failure")
 
+    def test_parse_warning_status(self):
+        parsed_args = parse_args(
+            [
+                "www.url.de",
+                "channel",
+                "-S",
+                "warning",
+            ]
+        )
+        self.assertEqual(parsed_args.status, "warning")
+
     def test_parse_short(self):
         parsed_args = parse_args(
             [
