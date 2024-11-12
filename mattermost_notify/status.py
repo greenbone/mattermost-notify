@@ -10,6 +10,7 @@ class Status(Enum):
     FAILURE = ":x: failure"
     UNKNOWN = ":grey_question: unknown"
     CANCELLED = ":no_entry_sign: canceled"
+    WARNING = ":warning: warning"
 
     def __str__(self):
         return self.name

@@ -33,7 +33,7 @@ def parse_args(args=None) -> Namespace:
         "-S",
         "--status",
         type=str,
-        choices=["success", "failure"],
+        choices=["success", "failure", "warning"],
         default=Status.SUCCESS.name,
         help="Status of Job",
     )
