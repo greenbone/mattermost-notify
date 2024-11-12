@@ -42,7 +42,7 @@ mnotify-git <hook_url> <channel> --free "What a pitty!"
 
 Print a github workflow status:
 ```
-mnotify-git <hook_url> <channel> -S [success, failure] -r <orga/repo> -b <branch> -w <workflow_id> -n <workflow_name>
+mnotify-git <hook_url> <channel> -S [success, failure, warning] -r <orga/repo> -b <branch> -w <workflow_id> -n <workflow_name>
 ```
 
 ## License
