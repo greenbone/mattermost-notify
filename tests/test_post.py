@@ -6,7 +6,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from mattermost_notify.errors import MattermostNotifyError
-from mattermost_notify.post import post
+from mattermost_notify.post import Colors, post
 
 
 class PostTestCase(unittest.TestCase):
@@ -15,11 +15,13 @@ class PostTestCase(unittest.TestCase):
         response = post_mock.return_value
         response.is_success = True
 
-        post("https://some.mattermost.url", "FooChannel", "Some Message")
+        post("https://some.mattermost.url", "FooChannel", "Some Message", color=Colors.SUCCESS)
 
         post_mock.assert_called_once_with(
             url="https://some.mattermost.url",
-            json={"channel": "FooChannel", "text": "Some Message"},
+            json={'channel': 'FooChannel', 'attachments': [
+                    {'color': '#28a745', 'text': 'Some Message', 'fallback': 'Some Message'}
+                ]},
         )
 
     @patch("mattermost_notify.post.httpx.post", autospec=True)
@@ -36,5 +38,7 @@ class PostTestCase(unittest.TestCase):
 
         post_mock.assert_called_once_with(
             url="https://some.mattermost.url",
-            json={"channel": "FooChannel", "text": "Some Message"},
+            json={'channel': 'FooChannel', 'attachments': [
+                    {'color': '#6c757d', 'text': 'Some Message', 'fallback': 'Some Message'}
+                ]},
         )
