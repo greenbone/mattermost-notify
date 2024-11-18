@@ -81,9 +81,8 @@ class FillTemplateTestCase(unittest.TestCase):
             branch="main",
         )
         expected = (
-            ":white_check_mark: success: [SomeWorkflow](https://github.com/foo/bar/actions/runs/w1) "
-            "([Add foo](https://github.com/foo/bar/commit/12345)) in "
-            "[foo/bar](https://github.com/foo/bar) ([main](https://github.com/foo/bar/tree/main))"
+            ":white_check_mark: success: [SomeWorkflow](https://github.com/foo/bar/actions/runs/w1) |"
+            " [foo/bar](https://github.com/foo/bar) (b [main](https://github.com/foo/bar/tree/main)) "
         )
         self.assertEqual(expected, actual)
 
