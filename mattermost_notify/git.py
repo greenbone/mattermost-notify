@@ -15,10 +15,10 @@ from pontos.terminal import RichTerminal
 from mattermost_notify.errors import MattermostNotifyError
 from mattermost_notify.parser import parse_args
 from mattermost_notify.post import post
-from mattermost_notify.status import Status
+from mattermost_notify.status import Status, status_to_emoji
 
 LONG_TEMPLATE = (
-    "#### Status: {status}\n\n"
+    "#### Status: {status_emoji} {status_text}\n\n"
     "| Workflow | {workflow} |\n"
     "| --- | --- |\n"
     "| Repository (branch) | {repository} ({branch}) |\n"
@@ -26,7 +26,8 @@ LONG_TEMPLATE = (
     "{highlight}"
 )
 
-SHORT_TEMPLATE = "{status}: {workflow} ({commit}) in {repository} ({branch})"
+SHORT_TEMPLATE = ("{status_emoji} {status_text}: {workflow} | {repository} "
+                  "(b {branch}) {highlight}")
 
 DEFAULT_GIT = "https://github.com"
 
@@ -121,6 +122,8 @@ def fill_template(
 
     return template.format(
         status=workflow_status.value,
+        status_emoji=status_to_emoji(workflow_status),
+        status_text=str(workflow_status).lower(),
         workflow=linker(used_workflow_name, workflow_url),
         repository=linker(repository, repository_url),
         branch=linker(used_branch, branch_url),

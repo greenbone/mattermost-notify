@@ -14,3 +14,16 @@ class Status(Enum):
 
     def __str__(self):
         return self.name
+
+
+def status_to_emoji(status: Status) -> str:
+    if status == Status.SUCCESS:
+        return ":white_check_mark:"
+    elif status == Status.FAILURE:
+        return ":x:"
+    elif status == Status.CANCELLED:
+        return ":no_entry_sign:"
+    elif status == Status.WARNING:
+        return ":warning:"
+    else:
+        return ":grey_question:"
