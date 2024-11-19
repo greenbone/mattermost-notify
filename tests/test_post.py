@@ -15,13 +15,25 @@ class PostTestCase(unittest.TestCase):
         response = post_mock.return_value
         response.is_success = True
 
-        post("https://some.mattermost.url", "FooChannel", "Some Message", color=Colors.SUCCESS)
+        post(
+            "https://some.mattermost.url",
+            "FooChannel",
+            "Some Message",
+            color=Colors.SUCCESS,
+        )
 
         post_mock.assert_called_once_with(
             url="https://some.mattermost.url",
-            json={'channel': 'FooChannel', 'attachments': [
-                    {'color': '#28a745', 'text': 'Some Message', 'fallback': 'Some Message'}
-                ]},
+            json={
+                "channel": "FooChannel",
+                "attachments": [
+                    {
+                        "color": "#28a745",
+                        "text": "Some Message",
+                        "fallback": "Some Message",
+                    }
+                ],
+            },
         )
 
     @patch("mattermost_notify.post.httpx.post", autospec=True)
@@ -38,7 +50,14 @@ class PostTestCase(unittest.TestCase):
 
         post_mock.assert_called_once_with(
             url="https://some.mattermost.url",
-            json={'channel': 'FooChannel', 'attachments': [
-                    {'color': '#6c757d', 'text': 'Some Message', 'fallback': 'Some Message'}
-                ]},
+            json={
+                "channel": "FooChannel",
+                "attachments": [
+                    {
+                        "color": "#6c757d",
+                        "text": "Some Message",
+                        "fallback": "Some Message",
+                    }
+                ],
+            },
         )
