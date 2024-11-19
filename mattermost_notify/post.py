@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from enum import Enum
 import httpx
 from pontos.typing import SupportsStr
 
 from mattermost_notify.errors import MattermostNotifyError
 
-class Colors(Enum):
+
+class Colors:
     """
     Colors namespace for mattermost notifications.
     The colors are borrowed from bootstrap 5.
@@ -19,11 +19,9 @@ class Colors(Enum):
     WARNING = "#e0a800"
     DANGER = "#c82333"
 
+
 def post(
-    url: str,
-    channel: str,
-    text: SupportsStr,
-    color: str = Colors.SECONDARY
+    url: str, channel: str, text: SupportsStr, color: str = Colors.SECONDARY
 ) -> None:
     """
     Post a message to a Mattermost channel.
@@ -38,14 +36,20 @@ def post(
     Raises:
         MattermostNotifyError: If the HTTP request fails.
     """
-    
-    response = httpx.post(url=url, json={"channel": channel, "attachments": [
-            {
-                "color": color,
-                "text": text,
-                "fallback": text,
-            }
-        ]})
+
+    response = httpx.post(
+        url=url,
+        json={
+            "channel": channel,
+            "attachments": [
+                {
+                    "color": color,
+                    "text": text,
+                    "fallback": text,
+                }
+            ],
+        },
+    )
 
     if not response.is_success:
         raise MattermostNotifyError(

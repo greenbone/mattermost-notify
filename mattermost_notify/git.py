@@ -26,8 +26,10 @@ LONG_TEMPLATE = (
     "{highlight}"
 )
 
-SHORT_TEMPLATE = ("{status_emoji} {status_text}: {workflow} | {repository} "
-                  "(b {branch}) {highlight}")
+SHORT_TEMPLATE = (
+    "{status_emoji} {status_text}: {workflow} | {repository} "
+    "(b {branch}) {highlight}"
+)
 
 DEFAULT_GIT = "https://github.com"
 
