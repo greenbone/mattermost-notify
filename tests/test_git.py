@@ -25,7 +25,7 @@ class FillTemplateTestCase(unittest.TestCase):
     def test_success_no_highlight(self):
         actual = fill_template(
             highlight=["user1", "user2"],
-            status=Status.SUCCESS.name,
+            status=Status.SUCCESS,
         )
         expected = """#### Status: :white_check_mark: success
 
@@ -40,7 +40,7 @@ class FillTemplateTestCase(unittest.TestCase):
     def test_warning_no_highlight(self):
         actual = fill_template(
             highlight=["user1", "user2"],
-            status=Status.WARNING.name,
+            status=Status.WARNING,
         )
         expected = """#### Status: :warning: warning
 
@@ -55,7 +55,7 @@ class FillTemplateTestCase(unittest.TestCase):
     def test_failure_highlight(self):
         actual = fill_template(
             highlight=["user1", "user2"],
-            status=Status.FAILURE.name,
+            status=Status.FAILURE,
         )
         expected = """#### Status: :x: failure
 
@@ -72,7 +72,7 @@ class FillTemplateTestCase(unittest.TestCase):
     def test_short_template(self):
         actual = fill_template(
             short=True,
-            status=Status.SUCCESS.name,
+            status=Status.SUCCESS,
             workflow_name="SomeWorkflow",
             workflow_id="w1",
             commit="12345",
@@ -89,7 +89,7 @@ class FillTemplateTestCase(unittest.TestCase):
     def test_template(self):
         actual = fill_template(
             short=False,
-            status=Status.SUCCESS.name,
+            status=Status.SUCCESS,
             workflow_name="SomeWorkflow",
             workflow_id="w1",
             commit="12345",

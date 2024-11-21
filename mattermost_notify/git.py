@@ -14,7 +14,7 @@ from pontos.terminal import RichTerminal
 
 from mattermost_notify.errors import MattermostNotifyError
 from mattermost_notify.parser import parse_args
-from mattermost_notify.post import post
+from mattermost_notify.post import post, Colors
 from mattermost_notify.status import Status, status_to_emoji
 
 LONG_TEMPLATE = (
@@ -64,7 +64,7 @@ def fill_template(
     commit_message: Optional[str] = None,
     branch: Optional[str] = None,
     repository: Optional[str] = None,
-    status: Optional[str] = None,
+    status: Optional[Status] = None,
     workflow_id: Optional[str] = None,
     workflow_name: Optional[str] = None,
 ) -> str:
@@ -74,8 +74,7 @@ def fill_template(
     event = get_github_event_json()
     workflow_info: dict[str, Any] = event.get("workflow_run", {})
 
-    status = status if status else workflow_info.get("conclusion")
-    workflow_status = Status[status.upper()] if status else Status.UNKNOWN
+    status = status if status else Status[workflow_info.get("conclusion", "unknown").upper()]
 
     used_workflow_name: str = (
         workflow_name if workflow_name else workflow_info.get("name", "")
@@ -119,13 +118,13 @@ def fill_template(
             commit_message = head_commit.get("message", "").split("\n", 1)[0]
 
     highlight_str = ""
-    if highlight and workflow_status not in (Status.SUCCESS, Status.WARNING):
+    if highlight and status not in (Status.SUCCESS, Status.WARNING):
         highlight_str = "".join([f"@{h}\n" for h in highlight])
 
     return template.format(
-        status=workflow_status.value,
-        status_emoji=status_to_emoji(workflow_status),
-        status_text=str(workflow_status).lower(),
+        status=status,
+        status_emoji=status_to_emoji(status),
+        status_text=str(status).lower(),
         workflow=linker(used_workflow_name, workflow_url),
         repository=linker(repository, repository_url),
         branch=linker(used_branch, branch_url),
@@ -141,17 +140,37 @@ def main() -> None:
 
     try:
         if not parsed_args.free:
+
+            # get status information for user icon and colors
+            # try to get information from the GITHUB_EVENT json
+            event = get_github_event_json()
+            workflow_info: dict[str, Any] = event.get("workflow_run", {})
+
+            status = status if status else workflow_info.get("conclusion")
+            workflow_status = Status[status.upper()] if status else Status.UNKNOWN
+
+            color=Colors.SECONDARY
+            if workflow_status == Status.SUCCESS:
+                color = Colors.SUCCESS
+            elif workflow_status == Status.WARNING:
+                color = Colors.WARNING
+            elif workflow_status == Status.FAILURE:
+                color = Colors.DANGER
+
+            emoji = status_to_emoji(workflow_status)
+            print(f"Picked emoji: {emoji} for status {workflow_status}")
+
             body = fill_template(
                 highlight=parsed_args.highlight,
                 short=parsed_args.short,
                 branch=parsed_args.branch,
                 commit=parsed_args.commit,
                 repository=parsed_args.repository,
-                status=parsed_args.status,
+                status=status,
                 workflow_id=parsed_args.workflow,
                 workflow_name=parsed_args.workflow_name,
             )
-            post(parsed_args.url, parsed_args.channel, body)
+            post(parsed_args.url, parsed_args.channel, body, color=color)
         else:
             post(parsed_args.url, parsed_args.channel, parsed_args.free)
 

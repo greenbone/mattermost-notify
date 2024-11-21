@@ -6,14 +6,17 @@ from enum import Enum
 
 
 class Status(Enum):
-    SUCCESS = ":white_check_mark: success"
-    FAILURE = ":x: failure"
-    UNKNOWN = ":grey_question: unknown"
-    CANCELLED = ":no_entry_sign: canceled"
-    WARNING = ":warning: warning"
+    SUCCESS = "success"
+    FAILURE = "failure"
+    UNKNOWN = "unknown"
+    CANCELLED = "canceled"
+    WARNING = "warning"
 
     def __str__(self):
         return self.name
+
+def string_to_status(status_str: str) -> Status:
+    return Status(status_str.upper()) if status_str else Status.UNKNOWN
 
 
 def status_to_emoji(status: Status) -> str:
