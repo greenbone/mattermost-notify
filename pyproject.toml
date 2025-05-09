@@ -28,7 +28,7 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.9,<4.0"
+python = "^3.9"
 pontos = ">=22.7.7"
 httpx = ">=0.23.1"
 
