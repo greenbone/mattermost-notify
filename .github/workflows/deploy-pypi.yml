@@ -16,7 +16,7 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v4.2.2
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4.2.2
       - name: Set up Python
         uses: greenbone/actions/poetry@027c80b4a1e454af192f93aa55cb2bc58ce44b66 #v3.27.7
         with:
