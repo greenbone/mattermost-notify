@@ -67,4 +67,60 @@ def parse_args(args=None) -> Namespace:
         help="List of persons to highlight in the channel",
     )
 
+    parser.add_argument(
+        "--product",
+        type=str,
+        help="Product name (asset, lookout, detect, management-console, security-intelligence, etc.)",
+    )
+
+    parser.add_argument(
+        "--stage",
+        type=str,
+        help="Deployment stage (dev, integration, testing, staging, production)",
+    )
+
+    parser.add_argument(
+        "--version",
+        type=str,
+        help="Product/Release version (e.g., 1.15.1, 1.15.1-alpha. 5)",
+    )
+
+    parser.add_argument(
+        "--service",
+        type=str,
+        help="Service name if single service was updated",
+    )
+
+    parser.add_argument(
+        "--from-stage",
+        type=str,
+        help="Source stage in transition (e.g., testing)",
+    )
+
+    parser.add_argument(
+        "--to-stage",
+        type=str,
+        help="Target stage in transition (e.g., staging)",
+    )
+
+    parser.add_argument(
+        "--notification-type",
+        type=str,
+        choices=[
+            "deployment",
+            "service-update",
+            "stage-transition",
+            "release",
+            "hotfix",
+        ],
+        default="deployment",
+        help="Type of notification",
+    )
+
+    parser.add_argument(
+        "--changed-services",
+        type=str,
+        help="Comma-separated list of changed services",
+    )
+
     return parser.parse_args(args=args)
