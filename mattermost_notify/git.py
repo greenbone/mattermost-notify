@@ -32,35 +32,35 @@ SHORT_TEMPLATE = (
 )
 
 DEPLOYMENT_TEMPLATE = (
-    "{status_emoji} Deployment: {status_text}{deployment_header}\n\n"
+    "{status_emoji} **Deployment:** {status_text}{deployment_header}\n\n"
     "Workflow: {workflow}\n"
     "Branch: {branch}\n"
     "{highlight}"
 )
 
 SERVICE_UPDATE_TEMPLATE = (
-    "{status_emoji} Service Update:  {status_text}{service_header}\n\n"
+    "{status_emoji} **Service Update:**  {status_text}{service_header}\n\n"
     "Workflow: {workflow}\n"
     "Branch: {branch}\n"
     "{highlight}"
 )
 
 STAGE_TRANSITION_TEMPLATE = (
-    "{status_emoji} Stage Transition: {status_text}{transition_header}\n\n"
+    "{status_emoji} **Stage Transition:** {status_text}{transition_header}\n\n"
     "Workflow: {workflow}\n"
     "Branch: {branch}\n"
     "{highlight}"
 )
 
 RELEASE_TEMPLATE = (
-    "{status_emoji} Release: {status_text}{release_header}\n\n"
-    "Workflow:  {workflow}\n"
+    "{status_emoji} **Release:** {status_text}{release_header}\n\n"
+    "Workflow: {workflow}\n"
     "Branch: {branch}\n"
     "{highlight}"
 )
 
 HOTFIX_TEMPLATE = (
-    "{status_emoji} Hotfix:  {status_text}{hotfix_header}\n\n"
+    "{status_emoji} **Hotfix:** {status_text}{hotfix_header}\n\n"
     "Workflow: {workflow}\n"
     "Branch: {branch}\n"
     "{highlight}"
@@ -90,58 +90,71 @@ def get_github_event_json() -> dict[str, Any]:
     except json.JSONDecodeError:
         raise MattermostNotifyError("Could not decode the JSON object.")
 
-def format_deployment_header(product: Optional[str], stage: Optional[str]) -> str:
+
+def format_deployment_header(
+    product: Optional[str], stage: Optional[str]
+) -> str:
     """Build header for deployment notification, only showing non-empty fields"""
     parts = []
     if product:
         parts.append(f"**Product:** {product}")
     if stage:
-        parts. append(f"**Stage:** {stage}")
-    
+        parts.append(f"**Stage:** {stage}")
+
     if parts:
         return " | " + " | ".join(parts)
     return ""
 
-def format_service_header(service: Optional[str], version: Optional[str]) -> str:
+
+def format_service_header(
+    service: Optional[str], version: Optional[str]
+) -> str:
     """Build header for service update notification, only showing non-empty fields"""
     parts = []
     if service:
         parts.append(f"**Service:** {service}")
     if version:
         parts.append(f"**Version:** {version}")
-    
+
     if parts:
         return " | " + " | ".join(parts)
     return ""
 
-def format_transition_header(product: Optional[str], from_stage: Optional[str], to_stage: Optional[str]) -> str:
+
+def format_transition_header(
+    product: Optional[str], from_stage: Optional[str], to_stage: Optional[str]
+) -> str:
     """Build header for stage transition notification, only showing non-empty fields"""
     parts = []
     if product:
         parts.append(f"**Product:** {product}")
-    
+
     if from_stage and to_stage:
-        parts. append(f"**Transition:** {from_stage} to {to_stage}")
+        parts.append(f"**Transition:** {from_stage} to {to_stage}")
     elif from_stage:
-        parts. append(f"**From Stage:** {from_stage}")
+        parts.append(f"**From Stage:** {from_stage}")
     elif to_stage:
         parts.append(f"**To Stage:** {to_stage}")
-    
+
     if parts:
         return " | " + " | ".join(parts)
     return ""
 
-def format_release_header(product:  Optional[str], version: Optional[str]) -> str:
+
+def format_release_header(
+    product: Optional[str], version: Optional[str]
+) -> str:
     """Build header for release/hotfix notification, only showing non-empty fields"""
     parts = []
     if product:
         parts.append(f"**Product:** {product}")
     if version:
         parts.append(f"**Version:** {version}")
-    
+
     if parts:
         return " | " + " | ".join(parts)
     return ""
+
 
 def fill_template(
     *,
@@ -235,8 +248,10 @@ def fill_template(
             service_header = format_service_header(service, version)
         elif notification_type == "stage-transition":
             template = STAGE_TRANSITION_TEMPLATE
-            transition_header = format_transition_header(product, from_stage, to_stage)
-        elif notification_type == "release": 
+            transition_header = format_transition_header(
+                product, from_stage, to_stage
+            )
+        elif notification_type == "release":
             template = RELEASE_TEMPLATE
             release_header = format_release_header(product, version)
         elif notification_type == "hotfix":
@@ -269,10 +284,11 @@ def fill_template(
             template_vars["release_header"] = release_header
         elif notification_type == "hotfix":
             template_vars["hotfix_header"] = hotfix_header
-        else: 
+        else:
             template_vars["deployment_header"] = deployment_header
 
     return template.format(**template_vars)
+
 
 def main() -> None:
     parsed_args = parse_args()
