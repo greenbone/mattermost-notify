@@ -31,8 +31,8 @@ class FillTemplateTestCase(unittest.TestCase):
 
 | Workflow |  |
 | --- | --- |
-| Repository (branch) |  ([](/tree/)) |
-| Related commit | [](/commit/) |
+| Repository (branch) |  () |
+| Related commit |  |
 
 """
         self.assertEqual(expected, actual)
@@ -46,8 +46,8 @@ class FillTemplateTestCase(unittest.TestCase):
 
 | Workflow |  |
 | --- | --- |
-| Repository (branch) |  ([](/tree/)) |
-| Related commit | [](/commit/) |
+| Repository (branch) |  () |
+| Related commit |  |
 
 """
         self.assertEqual(expected, actual)
@@ -61,8 +61,8 @@ class FillTemplateTestCase(unittest.TestCase):
 
 | Workflow |  |
 | --- | --- |
-| Repository (branch) |  ([](/tree/)) |
-| Related commit | [](/commit/) |
+| Repository (branch) |  () |
+| Related commit |  |
 
 @user1
 @user2
