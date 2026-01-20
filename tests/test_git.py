@@ -135,7 +135,7 @@ class FillTemplateTestCase(unittest.TestCase):
 """
         self.assertEqual(expected, actual)
 
-    # NEW:  Tests for deployment metadata templates
+    # New test cases
     def test_deployment_template(self):
         """Test deployment template with deployment metadata"""
         actual = fill_template(
@@ -148,22 +148,14 @@ class FillTemplateTestCase(unittest.TestCase):
             branch="main",
             product="asset",
             stage="integration",
-            version="1.15.1-alpha.10",
             notification_type="deployment",
         )
-        self.assertIn("Deployment: success", actual)
         self.assertIn(
-            "Product: asset | Stage: integration | Version: 1.15.1-alpha.10",
+            ":white_check_mark: **Deployment:** success | **Product:** asset | **Stage:** integration",
             actual,
         )
-        self.assertIn(
-            "[Update compose files](https://github.com/foo/bar/commit/12345)",
-            actual,
-        )
-        self.assertIn(
-            "[Stage Rebuild and Deploy](https://github.com/foo/bar/actions/runs/w1)",
-            actual,
-        )
+        self.assertIn("Workflow: [Stage Rebuild and Deploy]", actual)
+        self.assertIn("Branch: [main]", actual)
 
     def test_service_update_template(self):
         """Test service update template with service metadata"""
@@ -179,18 +171,12 @@ class FillTemplateTestCase(unittest.TestCase):
             version="1.15.2",
             notification_type="service-update",
         )
-        self.assertIn("Service Update:  success", actual)
         self.assertIn(
-            "Service: asset-management-backend | Version: 1.15.2", actual
-        )
-        self.assertIn(
-            "[Add new feature](https://github.com/greenbone/asset-management-backend/commit/a1b2c3d)",
+            ":white_check_mark: **Service Update:**  success | **Service:** asset-management-backend | **Version:** 1.15.2",
             actual,
         )
-        self.assertIn(
-            "[Build and Push Service](https://github.com/greenbone/asset-management-backend/actions/runs/w2)",
-            actual,
-        )
+        self.assertIn("Workflow: [Build and Push Service]", actual)
+        self.assertIn("Branch: [main]", actual)
 
     def test_stage_transition_template(self):
         """Test stage transition template with transition metadata"""
@@ -205,22 +191,14 @@ class FillTemplateTestCase(unittest.TestCase):
             product="lookout",
             from_stage="testing",
             to_stage="staging",
-            version="1.1.7-alpha.5",
             notification_type="stage-transition",
         )
-        self.assertIn("Stage Transition: success", actual)
         self.assertIn(
-            "Product: lookout | testing → staging | Version: 1.1.7-alpha.5",
+            ":white_check_mark: **Stage Transition:** success | **Product:** lookout | **Transition:** testing to staging",
             actual,
         )
-        self.assertIn(
-            "[Promote to staging](https://github.com/greenbone/automatix/commit/f4e5d6c)",
-            actual,
-        )
-        self.assertIn(
-            "[Stage Transition](https://github.com/greenbone/automatix/actions/runs/w3)",
-            actual,
-        )
+        self.assertIn("Workflow: [Stage Transition]", actual)
+        self.assertIn("Branch: [main]", actual)
 
     def test_release_template(self):
         """Test release template with release metadata"""
@@ -236,16 +214,12 @@ class FillTemplateTestCase(unittest.TestCase):
             version="0.15.0",
             notification_type="release",
         )
-        self.assertIn("Release: success", actual)
-        self.assertIn("Product: management-console | Version: 0.15.0", actual)
         self.assertIn(
-            "[Release v0.15.0](https://github.com/greenbone/management-console/commit/k0l1m2n)",
+            ":white_check_mark: **Release:** success | **Product:** management-console | **Version:** 0.15.0",
             actual,
         )
-        self.assertIn(
-            "[Release](https://github.com/greenbone/management-console/actions/runs/w4)",
-            actual,
-        )
+        self.assertIn("Workflow: [Release]", actual)
+        self.assertIn("Branch: [main]", actual)
 
     def test_hotfix_template(self):
         """Test hotfix template with hotfix metadata"""
@@ -254,23 +228,19 @@ class FillTemplateTestCase(unittest.TestCase):
             workflow_name="Hotfix Release",
             workflow_id="w5",
             commit="p9q8r7s",
-            commit_message="Hotfix: Critical security patch",
+            commit_message="Hotfix:  Critical security patch",
             repository="greenbone/security-intelligence",
             branch="main",
             product="security-intelligence",
             version="1.2.1",
             notification_type="hotfix",
         )
-        self.assertIn("Hotfix:  success", actual)
-        self.assertIn("Product: security-intelligence | Version: 1.2.1", actual)
         self.assertIn(
-            "[Hotfix: Critical security patch](https://github.com/greenbone/security-intelligence/commit/p9q8r7s)",
+            ":white_check_mark: **Hotfix:** success | **Product:** security-intelligence | **Version:** 1.2.1",
             actual,
         )
-        self.assertIn(
-            "[Hotfix Release](https://github.com/greenbone/security-intelligence/actions/runs/w5)",
-            actual,
-        )
+        self.assertIn("Workflow: [Hotfix Release]", actual)
+        self.assertIn("Branch: [main]", actual)
 
     def test_deployment_template_with_failure(self):
         """Test deployment template when deployment fails"""
@@ -284,14 +254,15 @@ class FillTemplateTestCase(unittest.TestCase):
             branch="main",
             product="asset",
             stage="testing",
-            version="1.15.1-alpha.11",
             notification_type="deployment",
             highlight=["devops"],
         )
-        self.assertIn("Deployment: failure", actual)
         self.assertIn(
-            "Product: asset | Stage: testing | Version: 1.15.1-alpha.11", actual
+            ":x: **Deployment:** failure | **Product:** asset | **Stage:** testing",
+            actual,
         )
+        self.assertIn("Workflow: [Stage Deploy]", actual)
+        self.assertIn("Branch: [main]", actual)
         self.assertIn("@devops", actual)
 
     def test_backward_compatibility_no_metadata(self):
@@ -306,6 +277,47 @@ class FillTemplateTestCase(unittest.TestCase):
             repository="foo/bar",
             branch="main",
         )
-        # Should use LONG_TEMPLATE when no metadata provided
         self.assertIn("#### Status:", actual)
         self.assertIn("| Workflow |", actual)
+
+    def test_deployment_template_partial_metadata(self):
+        """Test deployment template with only product (no stage)"""
+        actual = fill_template(
+            status=Status.SUCCESS.name,
+            workflow_name="Deploy",
+            workflow_id="w8",
+            commit="123abc",
+            commit_message="Deploy commit",
+            repository="foo/bar",
+            branch="main",
+            product="asset",
+            notification_type="deployment",
+        )
+        self.assertIn(
+            ":white_check_mark: **Deployment:** success | **Product:** asset",
+            actual,
+        )
+        self.assertNotIn("**Stage:**", actual)
+        self.assertIn("Workflow: [Deploy]", actual)
+        self.assertIn("Branch: [main]", actual)
+
+    def test_service_update_empty_version(self):
+        """Test service update with service but no version"""
+        actual = fill_template(
+            status=Status.SUCCESS.name,
+            workflow_name="Service Update",
+            workflow_id="w9",
+            commit="def456",
+            commit_message="Update service",
+            repository="greenbone/repo",
+            branch="main",
+            service="my-service",
+            notification_type="service-update",
+        )
+        self.assertIn(
+            ":white_check_mark: **Service Update:**  success | **Service:** my-service",
+            actual,
+        )
+        self.assertNotIn("**Version:**", actual)
+        self.assertIn("Workflow: [Service Update]", actual)
+        self.assertIn("Branch: [main]", actual)
