@@ -69,8 +69,10 @@ HOTFIX_TEMPLATE = (
 DEFAULT_GIT = "https://github.com"
 
 
-def linker(name: str, url: Optional[str] = None) -> str:
-    # create a markdown link
+def linker(name: Optional[str], url: Optional[str] = None) -> str:
+    """create a markdown link"""
+    if not name:
+        return ""
     return f"[{name}]({url})" if url else name
 
 
