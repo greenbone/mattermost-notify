@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mattermost-notify"
-version = "26.1.1"
+version = "26.1.2.dev1"
 description = "Python tool to post GitHub Action runs to mattermost"
 authors = ["Jaspar Stach <jasp.stac@gmx.de>"]
 license = "GPL-3.0-or-later"
