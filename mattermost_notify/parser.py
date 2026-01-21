@@ -113,7 +113,7 @@ def parse_args(args=None) -> Namespace:
             "release",
             "hotfix",
         ],
-        default="deployment",
+        default=None,
         help="Type of notification",
     )
 
