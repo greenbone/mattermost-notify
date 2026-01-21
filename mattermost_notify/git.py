@@ -175,7 +175,7 @@ def fill_template(
     service: Optional[str] = None,
     from_stage: Optional[str] = None,
     to_stage: Optional[str] = None,
-    notification_type: str = "deployment",
+    notification_type: Optional[str] = None,
     changed_services: Optional[str] = None,
 ) -> str:
     """
