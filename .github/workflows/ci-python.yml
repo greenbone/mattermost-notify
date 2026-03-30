@@ -12,9 +12,11 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - "3.9"
           - "3.10"
           - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
     uses: greenbone/workflows/.github/workflows/lint-python.yml@main
     with:
       lint-packages: mattermost_notify tests
@@ -26,9 +28,11 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - "3.9"
           - "3.10"
           - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
     uses: greenbone/workflows/.github/workflows/test-python.yml@main
     with:
       python-version: ${{ matrix.python-version }}
@@ -38,9 +42,11 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - "3.9"
           - "3.10"
           - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
     uses: greenbone/workflows/.github/workflows/typing-python.yml@main
     with:
       python-version: ${{ matrix.python-version }}
