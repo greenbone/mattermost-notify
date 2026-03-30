@@ -23,7 +23,7 @@ You will need a mattermost webhook URL and give a channel name.
 
 ### Requirements
 
-Python 3.7 and later is supported.
+Python 3.10 and later is supported.
 
 ### Install using pip
 
