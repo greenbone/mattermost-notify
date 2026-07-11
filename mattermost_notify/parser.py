@@ -82,7 +82,7 @@ def parse_args(args=None) -> Namespace:
     parser.add_argument(
         "--version",
         type=str,
-        help="Product/Release version (e.g., 1.15.1, 1.15.1-alpha. 5)",
+        help="Product/Release version (e.g., 1.15.1, 1.15.1-alpha.5)",
     )
 
     parser.add_argument(
