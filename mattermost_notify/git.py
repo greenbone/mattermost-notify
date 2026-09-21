@@ -7,7 +7,7 @@
 import json
 import os
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 from pontos.git import Git
 from pontos.terminal import RichTerminal
@@ -69,7 +69,7 @@ HOTFIX_TEMPLATE = (
 DEFAULT_GIT = "https://github.com"
 
 
-def linker(name: Optional[str], url: Optional[str] = None) -> str:
+def linker(name: str | None, url: str | None = None) -> str:
     """create a markdown link"""
     if not name:
         return ""
@@ -93,9 +93,7 @@ def get_github_event_json() -> dict[str, Any]:
         raise MattermostNotifyError("Could not decode the JSON object.")
 
 
-def format_deployment_header(
-    product: Optional[str], stage: Optional[str]
-) -> str:
+def format_deployment_header(product: str | None, stage: str | None) -> str:
     """Build header for deployment notification, only showing non-empty fields"""
     parts = []
     if product:
@@ -108,9 +106,7 @@ def format_deployment_header(
     return ""
 
 
-def format_service_header(
-    service: Optional[str], version: Optional[str]
-) -> str:
+def format_service_header(service: str | None, version: str | None) -> str:
     """Build header for service update notification, only showing non-empty fields"""
     parts = []
     if service:
@@ -124,7 +120,7 @@ def format_service_header(
 
 
 def format_transition_header(
-    product: Optional[str], from_stage: Optional[str], to_stage: Optional[str]
+    product: str | None, from_stage: str | None, to_stage: str | None
 ) -> str:
     """Build header for stage transition notification, only showing non-empty fields"""
     parts = []
@@ -143,9 +139,7 @@ def format_transition_header(
     return ""
 
 
-def format_release_header(
-    product: Optional[str], version: Optional[str]
-) -> str:
+def format_release_header(product: str | None, version: str | None) -> str:
     """Build header for release/hotfix notification, only showing non-empty fields"""
     parts = []
     if product:
@@ -161,22 +155,22 @@ def format_release_header(
 def fill_template(
     *,
     short: bool = False,
-    highlight: Optional[list[str]] = None,
-    commit: Optional[str] = None,
-    commit_message: Optional[str] = None,
-    branch: Optional[str] = None,
-    repository: Optional[str] = None,
-    status: Optional[str] = None,
-    workflow_id: Optional[str] = None,
-    workflow_name: Optional[str] = None,
-    product: Optional[str] = None,
-    stage: Optional[str] = None,
-    version: Optional[str] = None,
-    service: Optional[str] = None,
-    from_stage: Optional[str] = None,
-    to_stage: Optional[str] = None,
-    notification_type: Optional[str] = None,
-    changed_services: Optional[str] = None,
+    highlight: list[str] | None = None,
+    commit: str | None = None,
+    commit_message: str | None = None,
+    branch: str | None = None,
+    repository: str | None = None,
+    status: str | None = None,
+    workflow_id: str | None = None,
+    workflow_name: str | None = None,
+    product: str | None = None,
+    stage: str | None = None,
+    version: str | None = None,
+    service: str | None = None,
+    from_stage: str | None = None,
+    to_stage: str | None = None,
+    notification_type: str | None = None,
+    changed_services: str | None = None,
 ) -> str:
     """
     Fill notification template with workflow metadata and optional deployment context.
@@ -228,7 +222,7 @@ def fill_template(
 
         if not commit_message:
             commit_message = Git().show(
-                format="format:%s", patch=False, objects=commit  # type: ignore[assignment] # noqa: E501
+                format="format:%s", patch=False, objects=commit  # type: ignore[assignment]
             )
     else:
         commit_url = f'{repository_url}/commit/{head_commit.get("id", "")}'
