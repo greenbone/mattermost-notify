@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v4.2.2
       - name: Set up Python
-        uses: greenbone/actions/poetry@1e7f352e793c3815c54aebe8f9da50d7a80e6f41 #v3.36.18
+        uses: greenbone/actions/poetry@80a38a10bb7eb2b3c12f7f0361532dc6120342d6 #v3.36.20
         with:
           python-version: "3.10"
           install-dependencies: "false"
